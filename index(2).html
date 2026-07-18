@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#66152d">
+<title>Fire Patrol</title>
+<style>
+:root{
+  --burgundy:#66152d;--burgundy2:#8b2948;--gold:#d4af50;--navy:#15283f;
+  --bg:#f4f1eb;--card:#ffffff;--ink:#17202b;--muted:#6c7480;--line:#e3e5e8;
+  --green:#238554;--amber:#c87413;--red:#bd2c3b;--soft:#f8f9fb;
+}
+body.dark{
+  --bg:#10151d;--card:#19212c;--ink:#f4f5f7;--muted:#aab1bb;--line:#2c3643;
+  --soft:#131a23;--navy:#0f1d2e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent
+}
+button,input,textarea,select{font:inherit}
+.app{max-width:620px;margin:auto;min-height:100vh;padding-bottom:30px}
+.hero{
+  padding:calc(22px + env(safe-area-inset-top)) 18px 22px;color:white;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(212,175,80,.28),transparent 25%),
+    linear-gradient(145deg,var(--burgundy2),var(--burgundy) 58%,#360b18);
+  border-radius:0 0 28px 28px
+}
+.hero-top{display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:.72rem;letter-spacing:.18em;font-weight:900;color:#f2d883}
+.iconbtn{border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.1);color:#fff;border-radius:12px;padding:9px 11px}
+h1{font-size:2.35rem;line-height:1;margin:14px 0 8px}
+.hero p{margin:0;opacity:.9;line-height:1.45}
+.statusbar{
+  margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:9px
+}
+.status{
+  padding:11px;border-radius:14px;background:rgba(255,255,255,.11);
+  border:1px solid rgba(255,255,255,.15)
+}
+.status small{display:block;opacity:.75;font-size:.68rem}.status strong{font-size:.9rem}
+.nav{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:10px;
+  background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20
+}
+.nav button{border:0;background:transparent;color:var(--muted);font-size:.65rem;font-weight:800;padding:7px 2px;border-radius:11px}
+.nav button b{display:block;font-size:1.15rem;margin-bottom:2px}
+.nav button.active{background:#f3e7ec;color:var(--burgundy)}
+body.dark .nav button.active{background:#3a1e2a;color:#ffd2df}
+main{padding:14px}
+.page{display:none}.page.active{display:block}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:19px;
+  box-shadow:0 7px 22px rgba(20,36,59,.055)
+}
+.pad{padding:15px}
+.hero-card{
+  padding:17px;background:linear-gradient(145deg,var(--navy),#233d5d);color:white;border:0
+}
+.hero-card h2{margin:0 0 6px}.hero-card p{margin:0;opacity:.88;line-height:1.4}
+.bigstart{
+  width:100%;border:0;border-radius:16px;margin-top:15px;padding:15px;background:var(--gold);
+  color:#2b2108;font-weight:950;font-size:1rem
+}
+.quickgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.quick{
+  border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:17px;
+  padding:16px;text-align:left;min-height:105px
+}
+.quick b{display:block;font-size:1.55rem;margin-bottom:12px}.quick strong{display:block}.quick small{color:var(--muted)}
+.section-title{display:flex;justify-content:space-between;align-items:end;margin:21px 3px 10px}
+.section-title h2{font-size:1.08rem;margin:0}.section-title span{font-size:.73rem;color:var(--muted)}
+label.cap{font-size:.72rem;font-weight:800;color:var(--muted)}
+input,textarea,select{
+  width:100%;border:1px solid var(--line);border-radius:12px;padding:11px;
+  background:var(--soft);color:var(--ink)
+}
+textarea{min-height:76px;resize:vertical}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+.riskrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.risk{border:0;color:white;border-radius:15px;padding:13px 5px;font-weight:950}
+.risk small{display:block;font-size:.65rem;font-weight:700;margin-top:3px}
+.green{background:linear-gradient(145deg,#299765,#197345)}
+.amber{background:linear-gradient(145deg,#e0912c,#ae5a09)}
+.red{background:linear-gradient(145deg,#da4450,#9f1f2c)}
+.progresswrap{height:9px;background:var(--line);border-radius:999px;overflow:hidden}
+.progressbar{height:100%;width:0;background:linear-gradient(90deg,var(--burgundy),var(--gold));transition:.2s}
+.cards{display:grid;gap:10px;margin-top:10px}
+.checkcard{overflow:hidden}
+.checkhead{display:flex;align-items:center;gap:11px;padding:14px;cursor:pointer}
+.checkicon{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;background:#faf1df;font-size:1.35rem}
+body.dark .checkicon{background:#342d20}
+.checktitle{font-weight:900}.checkmeta{font-size:.73rem;color:var(--muted);margin-top:3px}
+.chev{margin-left:auto;color:var(--muted);transition:.2s}.open .chev{transform:rotate(180deg)}
+.checkbody{display:none;padding:0 13px 14px}.open .checkbody{display:block}
+.item{display:flex;gap:10px;align-items:flex-start;padding:11px 2px;border-top:1px solid var(--line);line-height:1.35}
+.item input{appearance:none;width:24px;height:24px;flex:0 0 auto;margin:0;border:2px solid #bdc3cc;border-radius:7px;padding:0;background:transparent}
+.item input:checked{background:var(--green);border-color:var(--green)}
+.item input:checked:after{content:"✓";display:grid;place-items:center;color:white;font-weight:900;height:100%}
+.watch{margin-top:9px;padding:11px;border-radius:13px;background:#fff4df;border:1px solid #ebce8b;color:#5a4211;font-size:.8rem;line-height:1.42}
+body.dark .watch{background:#342816;border-color:#5e4823;color:#efd9a5}
+.alert{
+  padding:17px;border-radius:20px;color:white;background:linear-gradient(145deg,#3d0e19,#7b1730)
+}
+.alert h2{margin:0 0 8px;color:#ffd9df}.alertgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+.alertitem{padding:11px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);font-size:.8rem;font-weight:800}
+.action{padding:13px;margin-bottom:10px}.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.btn{border:0;border-radius:13px;padding:13px;font-weight:900}
+.primary{background:var(--navy);color:white}.secondary{background:var(--line);color:var(--ink)}
+.danger{background:#f5dfe3;color:#8d1b2b}
+.summarybox{white-space:pre-wrap;font-family:ui-monospace,Menlo,monospace;font-size:.73rem;line-height:1.45;max-height:340px;overflow:auto}
+.scope p{line-height:1.5}.muted{color:var(--muted);font-size:.78rem}
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#111923;color:white;padding:10px 14px;border-radius:12px;opacity:0;transition:.2s;z-index:99
+}
+.toast.show{opacity:1}
+@media(min-width:621px){body{padding:16px}.app{border-radius:24px;overflow:hidden;box-shadow:0 0 34px rgba(0,0,0,.14)}}
+@media print{.nav,.hero,.no-print{display:none!important}.page{display:none!important}#report{display:block!important}body{background:white;color:black}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero">
+  <div class="hero-top">
+    <div class="brand">FIRE SAFETY OFFICER</div>
+    <button id="theme" class="iconbtn" aria-label="Toggle dark mode">◐</button>
+  </div>
+  <h1>Fire Patrol</h1>
+  <p>Operational aide-mémoire for event fire safety patrols.</p>
+  <div class="statusbar">
+    <div class="status"><small>CURRENT AREA</small><strong id="areaStatus">Not selected</strong></div>
+    <div class="status"><small>CHECKS COMPLETE</small><strong id="headProgress">0%</strong></div>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="active" data-page="home"><b>⌂</b>Home</button>
+  <button data-page="patrol"><b>✓</b>Patrol</button>
+  <button data-page="flags"><b>!</b>Red flags</button>
+  <button data-page="log"><b>✎</b>Log</button>
+  <button data-page="report"><b>▤</b>Report</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+  <div class="card hero-card">
+    <h2>Ready to begin?</h2>
+    <p>Set the patrol details, complete the checks, record action and escalate anything urgent.</p>
+    <button class="bigstart" data-go="patrol">Start or continue patrol</button>
+  </div>
+
+  <div class="section-title"><h2>Quick access</h2></div>
+  <div class="quickgrid">
+    <button class="quick" data-go="flags"><b>🚨</b><strong>Red flags</strong><small>Immediate escalation guide</small></button>
+    <button class="quick" data-go="log"><b>📝</b><strong>Action log</strong><small>Record defects and actions</small></button>
+    <button class="quick" data-go="report"><b>📄</b><strong>Patrol report</strong><small>Copy or save as PDF</small></button>
+    <button class="quick" data-go="scope"><b>ⓘ</b><strong>Scope</strong><small>Role and limitations</small></button>
+  </div>
+
+  <div class="section-title"><h2>Operational mindset</h2></div>
+  <div class="card pad">
+    <p><b>If a fire started here in the next five minutes, what would happen?</b></p>
+    <p class="muted">Can people escape? Can crews gain access? What simple action reduces the risk now?</p>
+  </div>
+</section>
+
+<section id="patrol" class="page">
+  <div class="card pad formgrid">
+    <label class="cap">Date<input id="date" type="date"></label>
+    <label class="cap">Time<input id="time" type="time"></label>
+    <label class="cap full">Area / zone<input id="area" placeholder="Grandstand, marquee, stable area…"></label>
+    <label class="cap full">Officer<input id="officer" value="Lee Vanderhoeven"></label>
+  </div>
+
+  <div class="section-title"><h2>Quick decision</h2><span>tap for reminder</span></div>
+  <div class="riskrow">
+    <button class="risk green" data-msg="GREEN: satisfactory. Continue patrol.">GREEN<small>Safe</small></button>
+    <button class="risk amber" data-msg="AMBER: correct, report and monitor.">AMBER<small>Act / report</small></button>
+    <button class="risk red" data-msg="RED: protect people and escalate immediately.">RED<small>Escalate</small></button>
+  </div>
+
+  <div class="section-title"><h2>Inspection checks</h2><span id="progressText">0 of 0</span></div>
+  <div class="progresswrap"><div id="progressBar" class="progressbar"></div></div>
+  <div id="cards" class="cards"></div>
+</section>
+
+<section id="flags" class="page">
+  <div class="alert">
+    <h2>Immediate escalation</h2>
+    <div>Protect people first. Raise the alarm and follow the event command structure.</div>
+    <div class="alertgrid">
+      <div class="alertitem">🔥 Fire or smoke</div><div class="alertitem">🚪 Locked exit</div>
+      <div class="alertitem">🟡 Suspected LPG leak</div><div class="alertitem">⚡ Arcing or burning</div>
+      <div class="alertitem">👥 Dangerous crowding</div><div class="alertitem">⛺ Collapse concern</div>
+      <div class="alertitem">🔕 Alarm impairment</div><div class="alertitem">🚒 Access blocked</div>
+    </div>
+  </div>
+  <div class="section-title"><h2>Immediate priorities</h2></div>
+  <div class="card pad">
+    <p><b>1. Protect life</b></p>
+    <p><b>2. Raise the alarm</b></p>
+    <p><b>3. Inform control or supervisor</b></p>
+    <p><b>4. Isolate the area only where safe and authorised</b></p>
+    <p><b>5. Record the time, location and action taken</b></p>
+  </div>
+</section>
+
+<section id="log" class="page">
+  <div class="section-title"><h2>Action log</h2><span>saved on this phone</span></div>
+  <div id="actions"></div>
+  <div class="btnrow no-print">
+    <button id="addAction" class="btn primary">Add action</button>
+    <button id="clearActions" class="btn danger">Clear actions</button>
+  </div>
+</section>
+
+<section id="report" class="page">
+  <div class="section-title"><h2>Patrol report</h2><span>updates automatically</span></div>
+  <div class="card pad">
+    <div id="summary" class="summarybox"></div>
+  </div>
+  <div class="btnrow no-print">
+    <button id="copy" class="btn primary">Copy report</button>
+    <button id="print" class="btn secondary">Save as PDF</button>
+    <button id="clearAll" class="btn danger full">Start a fresh patrol</button>
+  </div>
+</section>
+
+<section id="scope" class="page scope">
+  <div class="card pad">
+    <h2>Use and limitations</h2>
+    <p>This is a personal operational aide-mémoire, not an official Royal Ascot publication or formal fire-risk assessment.</p>
+    <p>Use it alongside the event fire-risk assessment, local instructions, site plans, briefings and supervisor direction.</p>
+    <p>Do not calculate occupancy, approve alterations, reset systems or certify compliance unless formally authorised and competent.</p>
+    <p>Observe, take immediate action within your authority, record and escalate.</p>
+  </div>
+</section>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const sections=[
+["🚪","Means of Escape & Crowd Flow","Deliveries, furniture, queues, cable ramps and temporary barriers.",[
+"Final exits available, unlocked and opening freely","Escape routes, stairs and gangways clear","Exit and directional signage visible","Emergency lighting appears operational","No trip hazards affecting escape","Disabled escape arrangements remain usable","No vehicles or concessions blocking exits or access"]],
+["🚪","Fire Doors & Separation","Wedged doors, damaged closers and unprotected service openings.",[
+"Fire doors closed or held by an approved device","Closers and latches appear to operate","Smoke seals and glazing appear intact","Plant and service-room doors secure","No obvious damage or service penetrations"]],
+["🔥","Catering, LPG & Hot Work","Escalate suspected gas leaks, uncontrolled flames and unsafe hot work.",[
+"LPG cylinders upright, secured and protected","Hoses, regulators and connections appear sound","Emergency gas isolation accessible","Suitable extinguisher and fire blanket present","Cooking separated from combustibles and waste","Hot work controlled by permit and fire watch"]],
+["⚡","Electrical, Batteries & Generators","Look behind temporary bars, stalls and service areas.",[
+"No damaged plugs, leads or sockets","No overloaded adaptors or daisy-chaining","Temporary cables protected from damage","Generators stable, ventilated and separated","No refuelling while hot or running","Fuel controlled away from the public","Battery charging supervised and away from exits"]],
+["🧯","Fire Protection & Warning","Do not reset, isolate or alter systems unless authorised.",[
+"Extinguishers visible and accessible","Correct equipment near the hazard","Call points and hose reels unobstructed","Risers, inlets and panels accessible","Alarm faults or isolations reported","Staff know how to raise the alarm"]],
+["🧹","Housekeeping & Combustibles","Waste and stock can build up quickly behind hospitality and catering areas.",[
+"Waste and packaging removed regularly","No storage in escape routes or stairs","Plant and electrical rooms clear","Decorations separated from heat sources","External bins and waste areas controlled","Back-of-house access remains clear"]],
+["⛺","Temporary Structures & Weather","Wind, rain, pooling water and ground conditions can quickly change risk.",[
+"Marquees, tents, bars and stalls appear stable","Exits and flaps clear and usable","Guy ropes, ballast and fencing safe","No unauthorised heaters or naked flames","Emergency signs and lighting visible","No sagging, movement, damage or water pooling"]],
+["🐎","Stable & Equine Areas","Keep ignition sources, vehicles and public movement away from bedding and forage.",[
+"Hay, straw and bedding controlled","Stable and service access clear","No smoking in or near stable areas","Electrical equipment and chargers appear safe","Vehicles and generators separated from storage","Staff understand alarm and animal movement arrangements"]],
+["🚒","Emergency Response & Access","Consider what the first appliance would need immediately.",[
+"Emergency vehicle routes clear","Fire gates, hydrants and inlets accessible","No parked vehicles restricting access","Stewards understand evacuation arrangements","Control or supervisor contact method available","Defects and remedial actions handed over"]]
+];
+
+const $=id=>document.getElementById(id);
+const save=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const load=(k,d="")=>{try{return localStorage.getItem(k)??d}catch(e){return d}};
+function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1800)}
+function go(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  $(page).classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  if(page==="report")updateSummary();
+  scrollTo(0,0)
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+let total=0;
+sections.forEach((s,si)=>{
+  const card=document.createElement("article");card.className="card checkcard";
+  card.innerHTML=`<div class="checkhead"><div class="checkicon">${s[0]}</div><div><div class="checktitle">${s[1]}</div><div class="checkmeta">0 of ${s[3].length} checked</div></div><div class="chev">⌄</div></div><div class="checkbody"></div>`;
+  const body=card.querySelector(".checkbody");
+  s[3].forEach((item,ii)=>{
+    total++;
+    const row=document.createElement("label");row.className="item";
+    const key=`c-${si}-${ii}`;
+    row.innerHTML=`<input type="checkbox" ${load(key)==="1"?"checked":""}><span>${item}</span>`;
+    const box=row.querySelector("input");
+    box.onchange=()=>{save(key,box.checked?"1":"0");updateProgress();setMeta()};
+    body.appendChild(row);
+  });
+  const watch=document.createElement("div");watch.className="watch";watch.innerHTML=`<b>Watch for:</b> ${s[2]}`;body.appendChild(watch);
+  const note=document.createElement("textarea");note.placeholder="Notes for this section…";note.value=load(`n-${si}`);
+  note.oninput=()=>save(`n-${si}`,note.value);body.appendChild(note);
+  function setMeta(){card.querySelector(".checkmeta").textContent=`${body.querySelectorAll('input:checked').length} of ${s[3].length} checked`}
+  setMeta();card.querySelector(".checkhead").onclick=()=>card.classList.toggle("open");
+  $("cards").appendChild(card);
+});
+function updateProgress(){
+  const done=document.querySelectorAll("#cards input:checked").length;
+  const pct=total?Math.round(done/total*100):0;
+  $("progressText").textContent=`${done} of ${total}`;
+  $("progressBar").style.width=pct+"%";$("headProgress").textContent=pct+"%";
+}
+updateProgress();
+
+["date","time","area","officer"].forEach(id=>{
+  const e=$(id);e.value=load("f-"+id,e.value);
+  e.oninput=()=>{save("f-"+id,e.value);if(id==="area")$("areaStatus").textContent=e.value||"Not selected"}
+});
+if(!$("date").value)$("date").value=new Date().toISOString().slice(0,10);
+if(!$("time").value)$("time").value=new Date().toTimeString().slice(0,5);
+$("areaStatus").textContent=$("area").value||"Not selected";
+
+let actionCount=parseInt(load("actionCount","1"));
+function renderActions(){
+  $("actions").innerHTML="";
+  for(let i=1;i<=actionCount;i++){
+    const d=document.createElement("div");d.className="card action";
+    d.innerHTML=`<div class="row">
+      <label class="cap">Risk<select id="r${i}"><option>Green</option><option>Amber</option><option>Red</option></select></label>
+      <label class="cap">Location<input id="l${i}" placeholder="Location"></label>
+      <label class="cap full">Issue<textarea id="i${i}" placeholder="Issue or defect"></textarea></label>
+      <label class="cap full">Action taken<textarea id="a${i}" placeholder="Immediate action and who was informed"></textarea></label>
+      <label class="cap full">Reference<input id="x${i}" placeholder="Time, photo or reference"></label></div>`;
+    $("actions").appendChild(d);
+    ["r","l","i","a","x"].forEach(p=>{
+      const e=$(p+i);e.value=load(p+i,p==="r"?"Amber":"");e.oninput=()=>save(p+i,e.value)
+    });
+  }
+}
+renderActions();
+$("addAction").onclick=()=>{actionCount++;save("actionCount",actionCount);renderActions()};
+$("clearActions").onclick=()=>{if(confirm("Clear the action log?")){for(let i=1;i<=actionCount;i++)["r","l","i","a","x"].forEach(p=>localStorage.removeItem(p+i));actionCount=1;save("actionCount","1");renderActions()}};
+
+function reportText(){
+  let out=`FIRE SAFETY PATROL REPORT\n\nDate: ${$("date").value}\nTime: ${$("time").value}\nArea: ${$("area").value}\nOfficer: ${$("officer").value}\nChecks completed: ${document.querySelectorAll("#cards input:checked").length} of ${total}\n\n`;
+  sections.forEach((s,si)=>{
+    const outstanding=[];
+    s[3].forEach((x,ii)=>{if(load(`c-${si}-${ii}`)!=="1")outstanding.push("• "+x)});
+    const note=load(`n-${si}`);
+    if(outstanding.length||note){
+      out+=s[1].toUpperCase()+"\n";
+      if(outstanding.length)out+="Outstanding / not confirmed:\n"+outstanding.join("\n")+"\n";
+      if(note)out+="Notes: "+note+"\n";
+      out+="\n";
+    }
+  });
+  let any=false;
+  for(let i=1;i<=actionCount;i++){
+    if(load("l"+i)||load("i"+i)||load("a"+i)){
+      if(!any){out+="ACTION LOG\n\n";any=true}
+      out+=`Action ${i} — ${load("r"+i,"Amber").toUpperCase()}\nLocation: ${load("l"+i)}\nIssue: ${load("i"+i)}\nAction taken: ${load("a"+i)}\nReference: ${load("x"+i)}\n\n`;
+    }
+  }
+  out+="This document is an operational aide-mémoire record and not a formal fire-risk assessment or certificate of compliance.";
+  return out;
+}
+function updateSummary(){$("summary").textContent=reportText()}
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(reportText());toast("Report copied")}catch(e){prompt("Copy the report:",reportText())}};
+$("print").onclick=()=>window.print();
+$("clearAll").onclick=()=>{if(confirm("Clear all patrol details, checks, notes and actions?")){localStorage.clear();location.reload()}};
+document.querySelectorAll(".risk").forEach(b=>b.onclick=()=>toast(b.dataset.msg));
+
+const dark=load("dark","0")==="1";document.body.classList.toggle("dark",dark);
+$("theme").onclick=()=>{document.body.classList.toggle("dark");save("dark",document.body.classList.contains("dark")?"1":"0")};
+</script>
+</body>
+</html>
