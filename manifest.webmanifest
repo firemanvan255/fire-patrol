@@ -1,0 +1,15 @@
+{
+  "name": "Fire Patrol Pro",
+  "short_name": "Fire Patrol",
+  "description": "Visual fire patrols, inspections, evidence capture and guided fire-safety support.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070d17",
+  "theme_color": "#09111f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
